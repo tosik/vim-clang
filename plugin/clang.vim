@@ -137,12 +137,15 @@ endif
 if !exists('g:clang_verbose_pmenu')
   let g:clang_verbose_pmenu = 0
 endif
-
-" Init on c/c++ files
-au FileType c,cpp call <SID>ClangCompleteInit(0)
 "}}}
 
+" Init on c/c++ files
+au FileType h,c,cpp call <SID>ClangCompleteInit(0)
+
 func! g:ClangCompleteReload()
+  augroup ClangComplete
+    au!
+  augroup END
   call s:ClangCompleteInit(1)
 endf
 
@@ -1069,35 +1072,37 @@ func! s:ClangCompleteInit(force)
     endif
   endif
 
-  " CompleteDone event is available since version 7.3.598
-  if exists("##CompleteDone")
-    au CompleteDone <buffer> call <SID>PDebug("##CompleteDone", "triggered")
-    " Automatically resize preview window after completion.
-    " Default assume preview window is above of the editing window.
-    au CompleteDone <buffer> call <SID>ShrinkPrevieWindow()
-  else
-    let b:clang_isCompleteDone_0 = 0
-    au CursorMovedI <buffer>
-          \ if b:clang_isCompleteDone_0 |
-          \   call <SID>ShrinkPrevieWindow() |
-          \   let b:clang_isCompleteDone_0 = 0 |
-          \ endif
-  endif
+  augroup ClangComplete
+    " CompleteDone event is available since version 7.3.598
+    if exists("##CompleteDone")
+      au CompleteDone <buffer> call <SID>PDebug("##CompleteDone", "triggered")
+      " Automatically resize preview window after completion.
+      " Default assume preview window is above of the editing window.
+      au CompleteDone <buffer> call <SID>ShrinkPrevieWindow()
+    else
+      let b:clang_isCompleteDone_0 = 0
+      au CursorMovedI <buffer>
+            \ if b:clang_isCompleteDone_0 |
+            \   call <SID>ShrinkPrevieWindow() |
+            \   let b:clang_isCompleteDone_0 = 0 |
+            \ endif
+    endif
 
-  au BufUnload <buffer> call <SID>DiagnosticsPreviewWindowCloseWhenLeave()
+    au BufUnload <buffer> call <SID>DiagnosticsPreviewWindowCloseWhenLeave()
 
-  au BufEnter <buffer> call <SID>BufVarSet()
-  au BufLeave <buffer> call <SID>BufVarRestore()
+    au BufEnter <buffer> call <SID>BufVarSet()
+    au BufLeave <buffer> call <SID>BufVarRestore()
 
-  " auto check syntax when write buffer
-	if g:clang_check_syntax_auto
-		au BufWritePost <buffer> ClangSyntaxCheck
-	endif
+    " auto check syntax when write buffer
+    if g:clang_check_syntax_auto
+      au BufWritePost <buffer> ClangSyntaxCheck
+    endif
 
-  " auto format current file if is enabled
-  if g:clang_format_auto
-    au BufWritePost <buffer> ClangFormat
-  endif
+    " auto format current file if is enabled
+    if g:clang_format_auto
+      au BufWritePost <buffer> ClangFormat
+    endif
+  augroup END
 
   if exists(":Neomake")
     " Set the configuration variables for Neomake makers
