@@ -141,6 +141,11 @@ endif
 " Init on c/c++ files
 au FileType c,cpp call <SID>ClangCompleteInit(0)
 "}}}
+
+func! g:ClangCompleteReload()
+  call s:ClangCompleteInit(1)
+endf
+
 "{{{ s:IsValidFile
 " A new file is also a valid file
 func! s:IsValidFile()
