@@ -1095,12 +1095,12 @@ func! s:ClangCompleteInit(force)
 
     " auto check syntax when write buffer
     if g:clang_check_syntax_auto
-      au BufWritePost <buffer> ClangSyntaxCheck
+      au BufWritePre <buffer> ClangSyntaxCheck
     endif
 
     " auto format current file if is enabled
     if g:clang_format_auto
-      au BufWritePost <buffer> ClangFormat
+      au BufWritePre <buffer> ClangFormat
     endif
   augroup END
 
