@@ -1224,7 +1224,7 @@ func! s:ClangExecute(root, clang_options, line, col)
     call s:PDebug("s:ClangExecute::cmd", l:acmd, 2)
     if v:shell_error
       if !empty(l:acmd_output)
-        call s:DiagnosticsWindowOpen('', split(l:acmd_output, '\n'))
+        "call s:DiagnosticsWindowOpen('', split(l:acmd_output, '\n'))
       endif
       call s:PError('s:ClangExecute::acmd', 'execute async command failed')
     endif
@@ -1385,7 +1385,7 @@ func! s:ClangComplete(findstart, base)
       pclose
     endif
     " call to show diagnostics
-    call s:DiagnosticsWindowOpen(expand('%:p:.'), b:clang_cache['diagnostics'])
+    "call s:DiagnosticsWindowOpen(expand('%:p:.'), b:clang_cache['diagnostics'])
     return l:start
   else
     call s:PDebug("ClangComplete", "phase 2")
